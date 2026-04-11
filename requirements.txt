@@ -1,0 +1,11 @@
+matplotlib
+seaborn
+pandas
+numpy
+scikit-learn
+pgmpy
+networkx
+ucimlrepo
+jupyter
+ipykernel
+scipy
