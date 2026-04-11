@@ -13,7 +13,7 @@ import seaborn as sns
 from pgmpy.estimators import BayesianEstimator
 from pgmpy.factors.discrete import DiscreteFactor
 from pgmpy.inference import BeliefPropagation, VariableElimination
-from pgmpy.models import DiscreteBayesianNetwork, MarkovNetwork
+from pgmpy.models import DiscreteBayesianNetwork, DiscreteMarkovNetwork
 from sklearn.metrics import brier_score_loss, log_loss, mutual_info_score, roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
@@ -217,7 +217,7 @@ def build_mrf_infer(
 ) -> BeliefPropagation:
     edge_weights = compute_edge_mi(train_df, edge_list) if gamma > 0 else None
 
-    mrf = MarkovNetwork()
+    mrf = DiscreteMarkovNetwork()
     mrf.add_nodes_from(ALL_FEATURES + ["num"])
     mrf.add_edges_from(edge_list)
 
