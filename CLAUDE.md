@@ -81,5 +81,7 @@ heart_disease_cleaned.csv
 
 ## Docs
 
-- `docs/evaluation-plan.md` — planned experiments and prioritised task list
-- `docs/notebook-review.md` — per-notebook review with specific improvement items
+- `docs/pgm-evaluation-gaps-and-plan.md` — planned experiments and prioritised task list
+- `docs/pgm-evaluation-implementation-plan.md` — approved implementation plan for evaluation.ipynb + latent_variable_inference.ipynb
+- `docs/pgm-results-and-findings.md` — high-level results summary
+- `docs/pgm-notebook-review.md` — per-notebook review with specific improvement items
