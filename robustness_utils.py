@@ -47,6 +47,15 @@ MATCHED_FEATURES = ["age", "trestbps", "chol", "thalach", "oldpeak"]
 MODEL_ORDER = ["Base BN", "Best BN", "Base MRF", "Best MRF"]
 FAMILY_ORDER = ["BN", "MRF"]
 MATCHED_MODEL_ORDER = ["Matched BN", "Matched MRF", "GMM"]
+MODEL_DISPLAY_LABELS = {
+    "Base BN": "Base BN",
+    "Best BN": "BN-HC",
+    "Base MRF": "Base MRF",
+    "Best MRF": "MRF-Tuned",
+    "Matched BN": "Matched BN",
+    "Matched MRF": "Matched MRF",
+    "GMM": "GMM",
+}
 
 STATE_NAMES = {
     "age": [0, 1, 2],
@@ -104,6 +113,12 @@ CLINICAL_GROUP_REMOVAL = {
     "drop_exercise_ecg": ["restecg", "thalach", "exang", "oldpeak", "slope"],
     "drop_imaging_perf": ["ca", "thal"],
     "drop_all_diagnostics": ["cp", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal"],
+}
+CLINICAL_GROUP_LABELS = {
+    "drop_risk_factors": "Risk Factors Removed",
+    "drop_exercise_ecg": "Exercise/ECG Removed",
+    "drop_imaging_perf": "Imaging/Perfusion Removed",
+    "drop_all_diagnostics": "Diagnostics Removed",
 }
 MATCHED_GROUP_REMOVAL = {
     "drop_risk": ["age", "trestbps", "chol"],
@@ -841,6 +856,7 @@ def plot_single_feature_heatmap(
             columns=model_order or MODEL_ORDER,
         )
     )
+    matrix = matrix.rename(columns=MODEL_DISPLAY_LABELS)
 
     plt.figure(figsize=(10, 6))
     sns.heatmap(matrix, annot=True, fmt=".3f", cmap=cmap, center=center, linewidths=0.5)
@@ -860,19 +876,27 @@ def plot_group_bars(
     model_order: list[str] | None = None,
 ) -> None:
     plot_df = results_df.groupby(["scenario", "model"])[value_col].mean().reset_index()
+    scenario_order = scenario_order or list(CLINICAL_GROUP_REMOVAL.keys())
+    scenario_labels = [CLINICAL_GROUP_LABELS.get(scenario, scenario) for scenario in scenario_order]
+
     plot_df["scenario"] = pd.Categorical(
         plot_df["scenario"],
-        scenario_order or list(CLINICAL_GROUP_REMOVAL.keys()),
+        scenario_order,
         ordered=True,
     )
     plot_df["model"] = pd.Categorical(plot_df["model"], model_order or MODEL_ORDER, ordered=True)
 
     plt.figure(figsize=(10, 5))
-    sns.barplot(data=plot_df.sort_values(["scenario", "model"]), x="scenario", y=value_col, hue="model")
-    plt.title(title)
-    plt.ylabel(ylabel)
-    plt.xlabel("Scenario")
-    plt.xticks(rotation=20)
+    ax = sns.barplot(data=plot_df.sort_values(["scenario", "model"]), x="scenario", y=value_col, hue="model")
+    ax.set_title(title)
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel("Scenario")
+    ax.set_xticklabels(scenario_labels, rotation=20, ha="center")
+    legend = ax.get_legend()
+    if legend is not None:
+        for text in legend.get_texts():
+            label = text.get_text()
+            text.set_text(MODEL_DISPLAY_LABELS.get(label, label))
     plt.tight_layout()
     plt.show()
 
@@ -883,13 +907,19 @@ def plot_random_missingness_curves(
     title: str,
     ylabel: str,
     model_order: list[str] | None = None,
+    colors: dict[str, str] | None = None,
 ) -> None:
     model_order = model_order or MATCHED_MODEL_ORDER
-    colors = {
+    default_colors = {
+        "Base BN": "#4C72B0",
+        "Best BN": "#0D6EFD",
+        "Base MRF": "#C44E52",
+        "Best MRF": "#E63946",
         "Matched BN": "#4C72B0",
         "Matched MRF": "#C44E52",
         "GMM": "#7B61FF",
     }
+    colors = colors or default_colors
 
     summary = (
         results_df.groupby(["n_removed", "model"])[value_col]
@@ -907,13 +937,17 @@ def plot_random_missingness_curves(
         x = sub["n_removed"].to_numpy()
         y = sub["mean"].to_numpy()
         err = np.nan_to_num(sub["std"].to_numpy(), nan=0.0)
-        plt.plot(x, y, marker="o", linewidth=2, label=model, color=colors.get(model))
+        plt.plot(x, y, marker="o", linewidth=2, label=MODEL_DISPLAY_LABELS.get(model, model), color=colors.get(model))
         plt.fill_between(x, y - err, y + err, alpha=0.15, color=colors.get(model))
 
     plt.title(title)
     plt.xlabel("Number of randomly removed features")
     plt.ylabel(ylabel)
-    plt.xticks(sorted(results_df["n_removed"].unique()))
+    x_values = sorted(results_df["n_removed"].unique())
+    if x_values and all(float(x).is_integer() for x in x_values):
+        plt.xticks(range(int(min(x_values)), int(max(x_values)) + 1))
+    else:
+        plt.xticks(x_values)
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.tight_layout()
