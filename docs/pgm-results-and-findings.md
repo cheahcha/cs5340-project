@@ -8,6 +8,37 @@ CS5340 course project: probabilistic graphical models applied to the Cleveland H
 
 Cleveland Heart Disease dataset — 303 patients, 13 clinical features, binary target (`num`: disease/no disease, 46% positive rate). All continuous features discretized into ordinal bins for use with pgmpy. 6 missing values (4 × `ca`, 2 × `thal`) imputed via EM.
 
+### Variable Glossary
+
+**Layer 1 — Risk Factors** (demographic and baseline clinical measurements, collected at rest):
+
+| Variable | Full name | States |
+|----------|-----------|--------|
+| `age` | Patient age in years | 0 = ≤45, 1 = 46–60, 2 = >60 |
+| `sex` | Biological sex | 0 = female, 1 = male |
+| `fbs` | Fasting blood sugar | 0 = ≤120 mg/dl, 1 = >120 mg/dl |
+| `chol` | Serum cholesterol | 0 = ≤199, 1 = 200–240, 2 = >240 mg/dl |
+| `trestbps` | Resting blood pressure | 0 = <130 mmHg (normal), 1 = ≥130 mmHg (elevated) |
+
+**Layer 2 — Disease Node**:
+
+| Variable | Full name | States |
+|----------|-----------|--------|
+| `num` | Presence of heart disease | 0 = healthy, 1 = disease |
+
+**Layer 3 — Symptoms / Indicators** (measurements that manifest as a result of disease):
+
+| Variable | Full name | States |
+|----------|-----------|--------|
+| `cp` | Chest pain type | 0 = typical angina, 1 = atypical angina, 2 = non-anginal pain, 3 = asymptomatic |
+| `thalach` | Maximum heart rate achieved | 0 = ≤119, 1 = 120–150, 2 = >150 bpm |
+| `exang` | Exercise-induced angina | 0 = no, 1 = yes |
+| `oldpeak` | ST depression induced by exercise relative to rest | 0 = 0–1, 1 = 1–2, 2 = >2 mm |
+| `slope` | Slope of peak exercise ST segment | 0 = upsloping, 1 = flat, 2 = downsloping |
+| `ca` | Number of major vessels coloured by fluoroscopy | 0–3 vessels |
+| `thal` | Thalassemia (blood disorder affecting haemoglobin) | 0 = normal, 1 = fixed defect, 2 = reversible defect |
+| `restecg` | Resting ECG results | 0 = normal, 1 = ST-T wave abnormality, 2 = left ventricular hypertrophy |
+
 ---
 
 ## Models Implemented
