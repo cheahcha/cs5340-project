@@ -260,7 +260,7 @@ For each scenario, we compare MCMC posterior estimates to exact VE inference on 
 
 \textbf{S2} simulates triage without fluoroscopy: removing \texttt{ca} and \texttt{thal} (the two strongest predictors) drops AUC from 0.83 to $\sim$0.77, and MCMC slightly outperforms VE here ($0.782$ vs.\ $0.764$), likely because the sampling-based marginalization over multiple latent nodes can capture posterior correlations that VE's exact enumeration handles differently under the BDeu-smoothed CPDs.
 
-\textbf{S3} represents the hardest setting: only 5 basic risk factors are observed, and all 8 symptoms plus \texttt{num} are latent. AUC drops to near-chance ($\sim$0.5), confirming that demographic risk factors alone carry insufficient discriminative information---consistent with the robustness experiments in Section~4.
+\textbf{S3} represents the hardest setting: only 5 basic risk factors are observed, and all 8 symptoms plus \texttt{num} are latent. AUC drops to near-chance ($\sim$0.5), confirming that demographic risk factors alone carry insufficient discriminative information---consistent with the robustness experiments in Section~6.
 
 \subsubsection{Uncertainty Quantification Across Scenarios}
 
@@ -649,21 +649,21 @@ SVM (RBF)               & 0.838 & 0.818 & 0.891          & $-0.41$          & 0.
 % ── Robustness Figures ───────────────────────────────────────────────────────
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.95\textwidth]{robustness_single_feature_auc_drop.png}
+    \includegraphics[width=0.95\textwidth]{figures/robustness_single_feature_auc_drop.png}
     \caption{Single-feature removal in the 13-feature protocol. \texttt{ca} is the most critical feature for all four graphical models.}
     \label{fig:robustness-single}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{robustness_group_auc_drop.png}
+    \includegraphics[width=0.9\textwidth]{figures/robustness_group_auc_drop.png}
     \caption{AUC drop under clinical group ablations. Diagnostic measurements dominate, while risk factors contribute little on their own.}
     \label{fig:robustness-groups}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.95\textwidth]{evaluation_reliability_diagrams.png}
+    \includegraphics[width=0.95\textwidth]{figures/evaluation_reliability_diagrams.png}
     \caption{Reliability diagrams from pooled 5-fold cross-validation. Similar AUC does not imply similar probability calibration.}
     \label{fig:robustness-calibration}
 \end{figure}
